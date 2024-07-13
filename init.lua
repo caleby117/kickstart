@@ -193,7 +193,7 @@ vim.keymap.set('n', '<leader>x', function()
   if not pcall(function()
     vim.cmd 'bp|bd #'
   end) then
-    vim.cmd 'q'
+    vim.cmd 'enew|bd#'
   end
 end, { desc = 'Close buffer' })
 vim.keymap.set('i', 'jj', '<Esc>', { desc = 'Esc in insert mode' })
@@ -205,8 +205,15 @@ end, { desc = 'Toggle comment' })
 
 vim.keymap.set('v', '<leader>/', "<ESC><cmd>lua require('Comment.api').toggle.linewise(vim.fn.visualmode())<CR>", { desc = 'Toggle comment' })
 
--- try to get current buffer?
--- print(vim.inspect_pos().buffer)
+-- other keymaps
+vim.keymap.set('n', 'J', 'mzJ`z', { desc = 'Joins lines and keeps cursor where it originally was' })
+vim.keymap.set('n', '<C-d>', '<C-d>zz', { desc = 'jump half page down' })
+vim.keymap.set('n', '<C-u>', '<C-u>zz', { desc = 'jump half page up' })
+vim.keymap.set('n', 'n', 'nzzzv', { desc = 'find string while keeping cursor in middle' })
+vim.keymap.set('n', 'N', 'Nzzzv', { desc = 'find string while keeping cursor in middle' })
+vim.keymap.set('n', '<Tab>', '<cmd>bn<CR>', { desc = 'next buffer' })
+vim.keymap.set('n', '<S-Tab>', '<cmd>bp<CR>', { desc = 'next buffer' })
+vim.keymap.set('n', '<leader>p', '"_dp', { desc = 'paste while preserving the current yanked content' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -662,6 +669,13 @@ require('lazy').setup({
       require('lspconfig')['ccls'].setup {}
     end,
   },
+  {
+    'kylechui/nvim-surround',
+    event = 'VeryLazy',
+    config = function()
+      require('nvim-surround').setup {}
+    end,
+  },
 
   { -- Autoformat
     'stevearc/conform.nvim',
@@ -701,6 +715,11 @@ require('lazy').setup({
         -- javascript = { { "prettierd", "prettier" } },
         c = { 'clang_format' },
         cpp = { 'clang_format' },
+      },
+      formatters = {
+        ['clang-format'] = {
+          prepend_args = { '-style=file' },
+        },
       },
     },
   },
@@ -860,15 +879,15 @@ require('lazy').setup({
     --
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
     'folke/tokyonight.nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
+    -- priority = 1000, -- Make sure to load this before all the other start plugins.
     init = function()
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
-
-      -- You can configure highlights by doing something like:
-      vim.cmd.hi 'Comment gui=none'
+      -- vim.cmd.colorscheme 'tokyonight-night'
+      --
+      -- -- You can configure highlights by doing something like:
+      -- vim.cmd.hi 'Comment gui=none'
     end,
   },
 
@@ -878,6 +897,25 @@ require('lazy').setup({
     --   -- vim.cmd.colorscheme 'kanagawa'
     --   -- vim.cmd.hi 'Comment gui=none'
     -- end,
+  },
+
+  {
+    'ribru17/bamboo.nvim',
+    priority = 1000, -- Make sure to load this before all the other start plugins.
+    opts = function()
+      require('bamboo').setup {
+        style = 'vulgaris',
+        -- dim_inactive = true,
+        transparent = true,
+        code_style = { comments = { italic = true } },
+        highlights = {
+          ['@comment'] = { fg = '$grey', fmt = 'italic' },
+          ['@type'] = { fg = '$orange' },
+          ['@primitive_type'] = { fg = '$orange' },
+        },
+      }
+      require('bamboo').load()
+    end,
   },
 
   {
@@ -924,7 +962,31 @@ require('lazy').setup({
       -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
-      require('mini.surround').setup()
+      -- require('mini.surround').setup()
+      --
+      --
+      --pattern should be something like ^TEST()_A
+      -- require('mini.hipatterns').setup {
+      --   highlighters = {
+      --     test = { pattern = '^TEST()_A', group = 'MiniHiPatternsNote' },
+      --   },
+      -- }
+      --
+      require('mini.move').setup {
+        mappings = {
+          up = 'K',
+          down = 'J',
+          left = '',
+          right = '',
+
+          line_up = '',
+          line_down = '',
+          line_left = '',
+          line_right = '',
+        },
+      }
+
+      require('mini.tabline').setup {}
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
@@ -995,11 +1057,11 @@ require('lazy').setup({
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
   -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
+  require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.neo-tree',
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
