@@ -183,7 +183,7 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
---
+
 --  See `:help wincmd` for a list of all window commands
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
@@ -214,6 +214,10 @@ vim.keymap.set('n', 'N', 'Nzzzv', { desc = 'find string while keeping cursor in 
 vim.keymap.set('n', '<Tab>', '<cmd>bn<CR>', { desc = 'next buffer' })
 vim.keymap.set('n', '<S-Tab>', '<cmd>bp<CR>', { desc = 'next buffer' })
 vim.keymap.set('n', '<leader>p', '"_dp', { desc = 'paste while preserving the current yanked content' })
+
+vim.o.termguicolors = true
+
+vim.o.backupcopy = 'no'
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -537,7 +541,7 @@ require('lazy').setup({
 
           -- Rename the variable under your cursor.
           --  Most Language Servers support renaming across files, etc.
-          map('<leader>ra', vim.lsp.buf.rename, '[R]e[n]ame')
+          map('<leader>ra', vim.lsp.buf.rename, '[R]en[A]me')
 
           -- Execute a code action, usually your cursor needs to be on top of an error
           -- or a suggestion from your LSP for this to activate.
@@ -609,9 +613,12 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        -- clangd = {},
+        clangd = {},
         -- gopls = {},
         -- pyright = {},
+        -- ruff = {},
+        pylsp = {},
+        jedi_language_server = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -662,13 +669,29 @@ require('lazy').setup({
             -- by the server configuration above. Useful when disabling
             -- certain features of an LSP (for example, turning off formatting for tsserver)
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+            if server_name == 'clangd' then
+              local config = require('lspconfig')[server_name]
+              config.default_config.cmd = { 'clangd', '-header-insertion=never' }
+              config.setup(server)
+              return
+            end
             require('lspconfig')[server_name].setup(server)
           end,
         },
       }
-      require('lspconfig')['ccls'].setup {}
+      -- require('lspconfig')['ccls'].setup {}
     end,
   },
+
+  -- screensaver thing
+  -- {
+  --   'folke/drop.nvim',
+  --   opts = {
+  --     theme = 'business',
+  --     screensaver = 1000 * 60 * 5,
+  --     filetypes = { 'ministarter' },
+  --   },
+  -- },
   {
     'kylechui/nvim-surround',
     event = 'VeryLazy',
@@ -872,7 +895,6 @@ require('lazy').setup({
       }
     end,
   },
-
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
     -- change the command in the config to whatever the name of that colorscheme is.
