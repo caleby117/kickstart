@@ -460,7 +460,10 @@ require('lazy').setup({
     'neovim/nvim-lspconfig',
     dependencies = {
       -- Automatically install LSPs and related tools to stdpath for Neovim
-      { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
+      {
+        'williamboman/mason.nvim',
+        config = true,
+      }, -- NOTE: Must be loaded before dependants
       'williamboman/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
@@ -613,7 +616,9 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        clangd = {},
+        clangd = {
+          cmd = { 'clangd', '--header-insertion=never' },
+        },
         -- gopls = {},
         -- pyright = {},
         -- ruff = {},
@@ -671,9 +676,13 @@ require('lazy').setup({
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
             if server_name == 'clangd' then
               local config = require('lspconfig')[server_name]
-              config.default_config.cmd = { 'clangd', '-header-insertion=never' }
+              -- for k, v in pairs(config.commands.ClangdSwitchSourceHeader) do
+              --   print(k)
+              --   print(v)
+              -- end
+              -- print(config)
+              -- config.default_config.cmd = { 'clangd', '-header-insertion=never' }
               config.setup(server)
-              return
             end
             require('lspconfig')[server_name].setup(server)
           end,
@@ -730,14 +739,14 @@ require('lazy').setup({
         }
       end,
       formatters_by_ft = {
-        lua = { 'stylua' },
+        ['lua'] = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
-        python = { 'black' },
+        ['python'] = { 'black' },
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
         -- javascript = { { "prettierd", "prettier" } },
-        c = { 'clang_format' },
-        cpp = { 'clang_format' },
+        ['c'] = { 'clang_format' },
+        ['cpp'] = { 'clang_format' },
       },
       formatters = {
         ['clang-format'] = {
@@ -1040,7 +1049,7 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc', 'cpp', 'yaml', 'make', 'python', 'dockerfile' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
