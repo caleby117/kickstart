@@ -156,7 +156,10 @@ vim.opt.scrolloff = 10
 
 -- Highlight the 80th column
 vim.opt.colorcolumn = { 80 }
-
+vim.o.tabstop = 4 -- A TAB character looks like 4 spaces
+vim.o.expandtab = true -- Pressing the TAB key will insert spaces instead of a TAB character
+vim.o.softtabstop = 4 -- Number of spaces inserted instead of a TAB character
+vim.o.shiftwidth = 4 -- Number of spaces inserted when indenting
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -620,13 +623,13 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         clangd = {
-          cmd = { 'clangd', '--header-insertion=never' },
+          cmd = { 'clangd', '--header-insertion=never', '-j=8', '--background-index' },
         },
         -- gopls = {},
         -- pyright = {},
         -- ruff = {},
         pylsp = {},
-        jedi_language_server = {},
+        -- jedi_language_server = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
