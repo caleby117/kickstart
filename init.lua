@@ -602,6 +602,10 @@ require('lazy').setup({
               vim.lsp.inlay_hint.enable(vim.inspect_pos().buffer, not vim.lsp.inlay_hint.is_enabled())
             end, '[T]oggle Inlay [H]ints')
           end
+
+          if client then
+            client.server_capabilities.semanticTokensProvider = nil
+          end
         end,
       })
 
@@ -720,7 +724,7 @@ require('lazy').setup({
     lazy = false,
     keys = {
       {
-        '<leader>f',
+        '<leader>F',
         function()
           require('conform').format { async = true, lsp_fallback = true }
         end,
@@ -1055,7 +1059,7 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc', 'cpp', 'yaml', 'make', 'python', 'dockerfile' },
+      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc', 'cpp', 'yaml', 'make', 'python', 'dockerfile', 'bibtex' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
