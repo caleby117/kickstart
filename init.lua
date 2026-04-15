@@ -631,8 +631,8 @@ require('lazy').setup({
         },
         -- gopls = {},
         -- pyright = {},
-        -- ruff = {},
-        pylsp = {},
+        ruff = {},
+        -- pylsp = {},
         -- jedi_language_server = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
