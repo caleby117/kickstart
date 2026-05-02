@@ -698,7 +698,7 @@ require('lazy').setup({
           end,
         },
       }
-      -- require('lspconfig')['ccls'].setup {}
+      require('lspconfig').ruff.setup {}
     end,
   },
 
@@ -751,7 +751,7 @@ require('lazy').setup({
       formatters_by_ft = {
         ['lua'] = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
-        ['python'] = { 'black' },
+        ['python'] = { 'black', 'ruff' },
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
         -- javascript = { { "prettierd", "prettier" } },
